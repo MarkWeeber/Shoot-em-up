@@ -41,3 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 3068816389
+    locked: 0
+  - name: Formations
+    uniqueID: 3686417493
+    locked: 0
+  - name: Obstacles
+    uniqueID: 1998659645
+    locked: 0
+  - name: Enemies
+    uniqueID: 2980316597
+    locked: 0
+  - name: Player
+    uniqueID: 3906785413
+    locked: 0
