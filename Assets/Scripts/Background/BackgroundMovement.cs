@@ -6,7 +6,7 @@ using System.Linq;
 public class BackgroundMovement : MonoBehaviour
 {
     [SerializeField] private float scrollSpeed = 1f;
-    [SerializeField] private Transform[] spaceRenders;
+    private Transform[] spaceRendersTransform;
     private int currentIndex = 0;
     private int spaceRendersCount;
     private float spaceRendersWidth;
@@ -14,15 +14,18 @@ public class BackgroundMovement : MonoBehaviour
     private Vector2 screenCenterViewPosition;
     private void Start()
     {
-        spaceRenders = GetComponentsInChildren<Transform>().Where(item => item.gameObject != this.gameObject).ToArray();
-        spaceRendersCount = spaceRenders.Count();
+        spaceRendersTransform = GetComponentsInChildren<Transform>().Where(item =>
+            (item.gameObject != this.gameObject) &&
+            (item.gameObject.GetComponent<SpriteRenderer>() != null)
+            ).ToArray();
+        spaceRendersCount = spaceRendersTransform.Count();
         spaceRendersWidth = GetComponentInChildren<SpriteRenderer>().size.x;
         for (int i = 1; i < spaceRendersCount; i++)
         {
-            spaceRenders[i].transform.position = new Vector3(
-                spaceRenders[i].transform.position.x + spaceRendersWidth * i,
-                spaceRenders[i].transform.position.y,
-                spaceRenders[i].transform.position.z);
+            spaceRendersTransform[i].transform.position = new Vector3(
+                spaceRendersTransform[i].transform.position.x + spaceRendersWidth * i,
+                spaceRendersTransform[i].transform.position.y,
+                spaceRendersTransform[i].transform.position.z);
         }
         screenCenterViewPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.transform.position.z));
         currentIndex = 1;
@@ -32,12 +35,12 @@ public class BackgroundMovement : MonoBehaviour
     {
         for (int i = 0; i < spaceRendersCount; i++)
         {
-            spaceRenders[i].transform.position = new Vector3(
-                spaceRenders[i].transform.position.x - scrollSpeed * Time.deltaTime,
-                spaceRenders[i].transform.position.y,
-                spaceRenders[i].transform.position.z);
+            spaceRendersTransform[i].transform.position = new Vector3(
+                spaceRendersTransform[i].transform.position.x - scrollSpeed * Time.deltaTime,
+                spaceRendersTransform[i].transform.position.y,
+                spaceRendersTransform[i].transform.position.z);
         }
-        distanceToShift = spaceRenders[currentIndex].transform.position.x - screenCenterViewPosition.x;
+        distanceToShift = spaceRendersTransform[currentIndex].transform.position.x - screenCenterViewPosition.x;
         if (distanceToShift <= 0)
         {
             if (currentIndex + 1 >= spaceRendersCount) // current index is the last one
@@ -62,9 +65,9 @@ public class BackgroundMovement : MonoBehaviour
 
     private void ShiftSpace(int index)
     {
-        spaceRenders[index].transform.position = new Vector3(
-            spaceRenders[index].transform.position.x + spaceRendersWidth * 2 + distanceToShift,
-            spaceRenders[index].transform.position.y,
-            spaceRenders[index].transform.position.z);
+        spaceRendersTransform[index].transform.position = new Vector3(
+            this.transform.position.x + spaceRendersWidth * 2 + distanceToShift,
+            spaceRendersTransform[index].transform.position.y,
+            spaceRendersTransform[index].transform.position.z);
     }
 }

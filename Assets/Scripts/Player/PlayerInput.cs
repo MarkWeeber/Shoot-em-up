@@ -13,6 +13,7 @@ public class PlayerInput : MonoBehaviour
     public bool Active { get { return active; } set { active = value; } }
     private bool active;
     private PlayerMovement playerMovement;
+    private FirePod frontalFirepod;
     private float horizontalInput;
     private float verticalInput;
     private float dashDurationTimer = 0f;
@@ -25,9 +26,35 @@ public class PlayerInput : MonoBehaviour
     {
         active = true;
         playerMovement = GetComponent<PlayerMovement>();
+        frontalFirepod = GetComponentInChildren<FirePod>();
     }
 
     private void Update()
+    {
+        ReadMovementControls();
+        ReadFireControls();
+    }
+
+    private void FixedUpdate()
+    {
+        TranslateMovementControls();
+    }
+
+    private void ReadFireControls()
+    {
+        if(active)
+        {
+            if(Input.GetButton(Constants.FIRE_BUTTON))
+            {
+                if(frontalFirepod != null)
+                {
+                    frontalFirepod.Fire();
+                }
+            }
+        }
+    }
+
+    private void ReadMovementControls()
     {
         if(dashActive)
         {
@@ -66,7 +93,7 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    private void TranslateMovementControls()
     {
         if(dashActive)
         {
