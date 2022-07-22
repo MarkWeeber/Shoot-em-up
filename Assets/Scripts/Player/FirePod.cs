@@ -22,7 +22,9 @@ public class FirePod : MonoBehaviour
     [SerializeField] private Transform ProjectilePrefab;
     [SerializeField] private float StartSpeed = 30f;
     [SerializeField] private float ProjectileLifetime = 5f;
+    [SerializeField] private float FireRatePerMinute = 300f;
     [SerializeField] private int PrefabCacheLimit = 30;
+    private float fireRateTimer = 0f;
     private GameObject prefabObject;
     private FireObject[] prefabCache;
     private int currentIndex = 0;
@@ -31,23 +33,27 @@ public class FirePod : MonoBehaviour
         List<FireObject> _prefabCahe = new List<FireObject>();
         for (int i = 0; i < PrefabCacheLimit; i++)
         {
-            _prefabCahe.Add(new FireObject(Instantiate(ProjectilePrefab, this.transform.position, Quaternion.identity, this.transform), 0f));
+            _prefabCahe.Add(new FireObject(Instantiate(ProjectilePrefab, this.transform.position, Quaternion.identity), 0f));
         }
         prefabCache = _prefabCahe.ToArray();
     }
     public void Fire()
     {
-        prefabCache[currentIndex].Transform.gameObject.SetActive(true);
-        prefabCache[currentIndex].Transform.position = this.transform.position;
-        prefabCache[currentIndex].Rigidbody2D.velocity = Vector2.right * StartSpeed;
-        prefabCache[currentIndex].Lifetime = ProjectileLifetime;
-        if(currentIndex == PrefabCacheLimit - 1)
+        if (fireRateTimer <= 0)
         {
-            currentIndex = 0;
-        }
-        else
-        {
-            currentIndex++;
+            fireRateTimer = 60f / FireRatePerMinute;
+            prefabCache[currentIndex].Transform.gameObject.SetActive(true);
+            prefabCache[currentIndex].Transform.position = this.transform.position;
+            prefabCache[currentIndex].Rigidbody2D.velocity = Vector2.right * StartSpeed;
+            prefabCache[currentIndex].Lifetime = ProjectileLifetime;
+            if(currentIndex == PrefabCacheLimit - 1)
+            {
+                currentIndex = 0;
+            }
+            else
+            {
+                currentIndex++;
+            }
         }
     }
 
@@ -66,6 +72,10 @@ public class FirePod : MonoBehaviour
                 prefabCache[i].Lifetime = 0;
                 prefabCache[i].Transform.gameObject.SetActive(false);
             }
+        }
+        if(fireRateTimer > 0)
+        {
+            fireRateTimer -= Time.deltaTime;
         }
     }
 

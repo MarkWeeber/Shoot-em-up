@@ -2,6 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.Jobs;
+using UnityEngine.Jobs;
+using Unity.Burst;
+// public struct BackgroundMovementStruct : IJobParallelFor
+// {
+//     public void Execute(int index)
+//     {
+
+//     }
+// }
+
 
 public class BackgroundMovement : MonoBehaviour
 {
